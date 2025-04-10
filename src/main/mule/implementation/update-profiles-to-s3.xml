@@ -15,7 +15,7 @@ http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/cu
 				<fixed-frequency frequency="1" timeUnit="DAYS"/>
 			</scheduling-strategy>
 		</scheduler>
-		<logger level="INFO" doc:name="Start log" doc:id="6b2cba8f-eddf-4efb-9364-007cb9a5dbc5" message="Started the Scedule process"/>
+		<logger level="INFO" doc:name="Start log" doc:id="6b2cba8f-eddf-4efb-9364-007cb9a5dbc5" message='#[output text/plain&#10;---&#10;&#10;"Started the Scedule process to update the employee profile report to aws s3. date:" ++ (now() as Date as String)]'/>
 		<salesforce:query doc:name="Query Employee Data" doc:id="fed7fecf-0d89-45d2-bcc9-46869ca211a9" config-ref="Salesforce_Config">
 			<salesforce:salesforce-query ><![CDATA[SELECT Id, Name, emp_email__c, emp_phone__c, emp_skills__c, employeeID__c 
 FROM Employee_Profile__c 
