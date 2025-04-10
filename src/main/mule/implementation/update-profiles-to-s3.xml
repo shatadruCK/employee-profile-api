@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:s3="http://www.mulesoft.org/schema/mule/s3" xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd">
+	
+	<flow name="update-profiles-to-s3Flow" doc:id="c6e50e7a-0368-4ec0-8b0c-6e9088ade846" >
+		<scheduler doc:name="Scheduler" doc:id="5ec77b19-49d3-4b3f-ac95-95410a6666f9" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="1" timeUnit="DAYS"/>
+			</scheduling-strategy>
+		</scheduler>
+		<logger level="INFO" doc:name="Start log" doc:id="6b2cba8f-eddf-4efb-9364-007cb9a5dbc5" message="Started the Scedule process"/>
+		<salesforce:query doc:name="Query Employee Data" doc:id="fed7fecf-0d89-45d2-bcc9-46869ca211a9" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[SELECT Id, Name, emp_email__c, emp_phone__c, emp_skills__c, employeeID__c 
+FROM Employee_Profile__c 
+WHERE LastModifiedDate = TODAY 
+]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Create Employee Profile Report" doc:id="0619e577-002c-4485-92ec-bba38b5f96d3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xlsx
+---
+{
+	Sheet1: payload map ( payload01 , indexOfPayload01 ) -> {
+		Name: payload01.Name,
+		Employee_id: payload01.employeeID__c,
+		Email: payload01.emp_email__c,
+		Phone: payload01.emp_phone__c,
+		Skill: payload01.emp_skills__c,
+		SF_id: payload01.Id
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<crypto:pgp-encrypt doc:name="Pgp encrypt Report" doc:id="871df64f-1b82-40db-834d-2c5124dadfad" config-ref="Crypto_Pgp" fileName='#["Employee_Profile_Report" ++ now() as DateTime]' keyId="1D58EC6C65735A20"/>
+		<s3:put-object doc:name="Put Report In S3 Bucket" doc:id="40a59d31-0765-4c46-a89c-802965833be7" config-ref="Amazon_S3_Configuration" bucketName="uho-covid-case-buccet" key="uho-covid-case-buccet/reports"/>
+		<logger level="INFO" doc:name="End log" doc:id="b7b1735d-d0df-4329-b166-9d9004185cd7" message="Completed the scheduled process"/>
+	</flow>
+</mule>

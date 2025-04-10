@@ -1,0 +1,8 @@
+{
+  "sampleData": {
+    "1e70f492-48ca-40af-83a6-11393aabf2e6": {
+      "vars-incomingPayload": "sample_data/java.dwl",
+      "payload": "sample_data/json.json"
+    }
+  }
+}

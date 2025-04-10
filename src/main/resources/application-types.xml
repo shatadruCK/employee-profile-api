@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="employee-profile-report" format="excel">
+      <types:shape format="weave"><![CDATA[%dw 2.0
+
+type employee_profile_report = {|
+  Sheet1?: Array<{|    Name: String,     Employee_id: String,     Email: String,     Phone: String,     Skill: String,     SF_id: String  |}>
+|}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#0619e577-002c-4485-92ec-bba38b5f96d3">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="employee-profile-report"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#1987b4d6-45b3-4d22-9745-33a39a6317b6"/>
+</types:mule>

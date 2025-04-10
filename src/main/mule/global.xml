@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto"
+	xmlns:s3="http://www.mulesoft.org/schema/mule/s3"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd
+http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<http:listener-config
+		name="salesforce-emp-profile-api-httpListenerConfig" basePath="employee">
+		<http:listener-connection host="0.0.0.0"
+			port="${secure::http.port}" />
+	</http:listener-config>
+	<apikit:config name="salesforce-emp-profile-api-config"
+		api="salesforce-emp-profile-api.raml"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="0d209242-4b14-43f6-83f8-7f3a8433140f" >
+		<salesforce:basic-connection username="${secure::salesforce.userName}" password="${secure::salesforce.password}" securityToken="${secure::salesforce.securityToken}"/>
+	</salesforce:sfdc-config>
+	<api-gateway:autodiscovery apiId="${secure::autoDiscovery.apiId}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="2ec94a44-ee7c-4843-8882-ca860922c950" flowRef="salesforce-emp-profile-api-main" />
+	<s3:config name="Amazon_S3_Configuration" doc:name="Amazon S3 Configuration" doc:id="de0513b6-27d0-4758-a6d0-8f2f1341020b" >
+		<s3:connection accessKey="${secure::aws.accessKey}" secretKey="${secure::aws.securityKey}" region="eu-north-1" />
+	</s3:config>
+	<crypto:pgp-config name="Crypto_Pgp" doc:name="Crypto Pgp" doc:id="b90464a1-898b-4b3d-95ba-2bb6e9d168f1" publicKeyring="pgp/public.asc" >
+		<crypto:pgp-key-infos >
+			<crypto:pgp-asymmetric-key-info keyId="${secure::pgp.keyId}" fingerprint="${secure::pgp.fingerPrint}" />
+		</crypto:pgp-key-infos>
+	</crypto:pgp-config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="d3eb6e15-eaa2-4126-9401-59e8a126036e" file="${env}.yaml" key="${encKey}" />
+	
+</mule>

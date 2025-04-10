@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<flow name="send-email" doc:id="5c851125-8fcd-4946-8702-228de4b86ad1" >
+		<email:send doc:name="Send" doc:id="1e70f492-48ca-40af-83a6-11393aabf2e6" config-ref="Email_SMTP" fromAddress="shatadru.mandal@cloudkaptan.com" subject="#[vars.emailSubject]">
+			<email:to-addresses>
+				<email:to-address value="#[vars.emailId]" />
+			</email:to-addresses>
+			<email:body contentType="text/plain">
+				<email:content><![CDATA[#[vars.emailBody]]]></email:content>
+			</email:body>
+		</email:send>
+	</flow>
+</mule>

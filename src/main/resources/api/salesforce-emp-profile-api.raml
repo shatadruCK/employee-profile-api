@@ -1,0 +1,76 @@
+#%RAML 1.0
+title: salesforce-emp-profile-api
+description: API for creating and updating employee profiles in Salesforce
+version: v1
+baseUri: http://localhost:8083/emp
+uses:
+  dataTypes: datatype-library/datatypes.raml
+traits:
+  x-corelation-id: !include /exchange_modules/0c5afb74-0b0b-415a-a863-8da8b128dbaa/uhub-x-correlation-id/1.0.1/uhub-x-correlation-id.raml
+  x-transaction-id: !include /exchange_modules/0c5afb74-0b0b-415a-a863-8da8b128dbaa/uhub-x-transaction-id/2.0.0/uhub-x-transaction-id.raml
+/createEmployeeProfile:
+  post:
+    description: Creates an employee profile in Salesforce and sends an email upon successful creation.
+    is: [x-corelation-id, x-transaction-id]
+    body:
+      application/json:
+        type: dataTypes.EmployeeRequest
+        example: !include examples/employee-request-example.json
+    responses:
+      201:
+        description: Employee profile created successfully
+        body:
+          application/json:
+            type: dataTypes.EmployeeCreateResponse
+            example: !include examples/employee-created-response-example.json
+      400:
+        description: Bad Request - Required Key not found
+        body:
+          application/json:
+            type: dataTypes.ErrorResponse
+            example: !include examples/400.json
+      500:
+        description: Internal Server Error
+        body:
+          application/json:
+            type: dataTypes.ErrorResponse
+            example: !include examples/500.json
+      503:
+        description: Service Unavailable
+        body:
+          application/json:
+            type: dataTypes.ErrorResponse
+            example: !include examples/503.json
+/updateEmployeeProfile/{employeeId}:
+    put:
+      description: Updates an employee profile in Salesforce and notifies the user via email.
+      is: [x-corelation-id, x-transaction-id]
+      body:
+        application/json:
+          type: dataTypes.EmployeeRequest
+          example: !include examples/employee-request-example.json
+      responses:
+        200:
+          description: Employee profile updated successfully
+          body:
+            application/json:
+              type: dataTypes.EmployeeUpdateResponse
+              example: !include examples/employee-updated-response-example.json
+        400:
+          description: Bad Request - Required Key not found
+          body:
+            application/json:
+              type: dataTypes.ErrorResponse
+              example: !include examples/400.json
+        500:
+          description: Internal Server Error
+          body:
+            application/json:
+              type: dataTypes.ErrorResponse
+              example: !include examples/500.json
+        503:
+          description: Service Unavailable
+          body:
+            application/json:
+              type: dataTypes.ErrorResponse
+              example: !include examples/503.json
