@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="put:\updateEmployeeProfile\(employeeId):application\json:salesforce-emp-profile-api-config">
+        <logger level="INFO" doc:name="Start Log" doc:id="ec8cdd78-e984-4051-aa60-b80092f57924" message='#[output text/plain&#10;---&#10;"Update employee event started payload: " ++ write(payload, "application/json")]'/>
+		<ee:transform doc:name="Set updatePayload And correlationId">
+            <ee:variables>
+                <ee:set-variable variableName="employeeId"><![CDATA[attributes.uriParams.employeeId]]></ee:set-variable>
+				<ee:set-variable variableName="updatePayload" ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-variable>
+				<ee:set-variable variableName="correlationId" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.headers.'x-correlation-id' default payload.empName]]></ee:set-variable>
+				<ee:set-variable variableName="emailId" ><![CDATA[payload.empEmail]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<salesforce:query doc:name="Retrieve Id Of Traget Record" doc:id="de160ae8-02ca-4458-9c8e-ac7bff63d25f" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select id, name, emp_email__c, emp_phone__c, emp_skills__c FROM Employee_Profile__c WHERE employeeID__c = ':empId']]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	empId : vars.employeeId
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Set Payload For Update" doc:id="3b4ce536-6455-4383-af4d-3ebbd0c3ed3f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[{
+	"Id": payload[0].Id,
+	"Name": vars.updatePayload.empName,
+	"emp_email__c": vars.updatePayload.empEmail,
+	"emp_phone__c": vars.updatePayload.empPhone as String,
+	"emp_skills__c": vars.updatePayload.empSkills
+	}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:update type="Employee_Profile__c" doc:name="Update Record" doc:id="f26f4559-4d8a-479d-a9ca-cbffd1c1be8a" config-ref="Salesforce_Config">
+		</salesforce:update>
+		<ee:transform doc:name="Set Response">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  Status: 200,
+  message: "updated"
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+            </ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="emailBody" ><![CDATA[output text/plain
+---
+"Hi " ++ (vars.updatePayload.empName default "Employee") ++ ",\n\n" ++
+"Your employee profile has been updated successfully in Salesforce.\n\nThanks"
+]]></ee:set-variable>
+				<ee:set-variable variableName="emailSubject" ><![CDATA["Profile Update"]]></ee:set-variable>
+			</ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="bd91cbea-0b3e-432b-92c8-2fbace2f6f4d" name="send-email"/>
+		<logger level="INFO" doc:name="End Log" doc:id="86506361-3149-426e-ae45-764effc65faf" message="Complete update record flow"/>
+    </flow>
+	</mule>

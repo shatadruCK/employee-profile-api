@@ -1,0 +1,14 @@
+"http":
+  "port": "8081"
+"salesforce":
+  "userName": "shatadru.mandal783@agentforce.com"
+  "password": "![rAnl4fjvAjLqOPOHyIa8WQ==]"
+  "securityToken": "![6vR+jTtOYtUHwfxoaz3lhNdMHol0w9wO5kLG0MLYrKg=]"
+"autoDiscovery":
+  "apiId": "![ihSp1dP4gvUquvu1va8g1A==]"
+"aws":
+  "accessKey": "![8DMX7bgsNYYGZ1iqgMHlROvb7n4sGpzbjaGJcXB0BRk=]"
+  "securityKey": "![zRrWzaeEWBpYpU75A27E7zMGbxor+3iaVy0KGnVISIBR/ysh+eHgxCj52KDowH9d]" 
+"pgp":
+  "keyId": "![RVUb5qGBJ+JKtbiqiuGLBNYqqsnSFLk4QaBpVVmTOBs=]"
+  "fingerPrint": "![bC4nQHUMTRdv8D2CdLcfdVnw0ugeVvYjY7ips44rQV52/T76Fk0YJmWk21S9sEvK]"

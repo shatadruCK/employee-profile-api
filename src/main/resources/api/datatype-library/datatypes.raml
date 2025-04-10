@@ -1,0 +1,55 @@
+#%RAML 1.0 Library
+usage: Data types for Salesforce Employee API
+
+types:
+  EmployeeRequest:
+    type: object
+    properties:
+      empName:
+        type: string
+        required: true
+      empEmail:
+        type: string
+        required: true
+      empPhone:
+        type: integer
+        required: false
+      empSkills:
+        type: string
+        required: true
+
+  EmployeeCreateResponse:
+    type: object
+    properties:
+      employeeId:
+        type: string
+        required: true
+
+  EmployeeUpdateResponse:
+    type: object
+    properties:
+      Status:
+        type: integer
+        required: true
+      message:
+        type: string
+        required: true
+
+  ErrorResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        required: true
+      message:
+        type: string
+        required: true
+      description:
+        type: string
+        required: true
+      dateTime:
+        type: datetime
+        required: true
+      transactionId:
+        type: string
+        required: true
