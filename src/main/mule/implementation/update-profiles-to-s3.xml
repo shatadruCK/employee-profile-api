@@ -42,5 +42,6 @@ output application/xlsx
 		<crypto:pgp-encrypt doc:name="Pgp encrypt Report" doc:id="871df64f-1b82-40db-834d-2c5124dadfad" config-ref="Crypto_Pgp" fileName='#["Employee_Profile_Report" ++ now() as DateTime]' keyId="1D58EC6C65735A20"/>
 		<s3:put-object doc:name="Put Report In S3 Bucket" doc:id="40a59d31-0765-4c46-a89c-802965833be7" config-ref="Amazon_S3_Configuration" bucketName="uho-covid-case-buccet" key="uho-covid-case-buccet/reports"/>
 		<logger level="INFO" doc:name="End log" doc:id="b7b1735d-d0df-4329-b166-9d9004185cd7" message="Completed the scheduled process"/>
+		<error-handler ref="emp-global-error-Handler"/>
 	</flow>
 </mule>

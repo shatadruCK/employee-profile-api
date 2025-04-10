@@ -35,6 +35,7 @@ output application/java
 ---
 payload]]></ee:set-variable>
 				<ee:set-variable variableName="emailId" ><![CDATA[payload.empEmail]]></ee:set-variable>
+				<ee:set-variable variableName="flowName" ><![CDATA["create-employee-profile"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<ee:transform
@@ -53,13 +54,8 @@ output application/java
 			<ee:variables>
 			</ee:variables>
 		</ee:transform>
-		<salesforce:create
-			doc:name="Create Employee Profile"
-			doc:id="76c2213f-a72c-4663-8ac5-dba288a9c848"
-			config-ref="Salesforce_Config" type="Employee_Profile__c" />
-		<salesforce:query doc:name="Query Employee Id"
-			doc:id="d943143e-968b-427c-aefd-b10853d6aaff"
-			config-ref="Salesforce_Config">
+		<salesforce:create doc:name="Create Employee Profile" doc:id="76c2213f-a72c-4663-8ac5-dba288a9c848" config-ref="Salesforce_Config" type="Employee_Profile__c" />
+		<salesforce:query doc:name="Query Employee Id" doc:id="d943143e-968b-427c-aefd-b10853d6aaff" config-ref="Salesforce_Config">
 			<salesforce:salesforce-query><![CDATA[SELECT 	employeeID__c FROM Employee_Profile__c WHERE emp_email__c = ':empMail']]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/java
 ---
@@ -92,5 +88,6 @@ output application/json
 		<logger level="INFO" doc:name="End Log"
 			doc:id="d2602924-440a-4b60-bc85-e274d88ab91d"
 			message="Completed the employee profile creation" />
+		
 	</flow>
 </mule>
