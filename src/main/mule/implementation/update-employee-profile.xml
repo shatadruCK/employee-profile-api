@@ -20,6 +20,7 @@ output application/java
 ---
 attributes.headers.'x-correlation-id' default payload.empName]]></ee:set-variable>
 				<ee:set-variable variableName="emailId" ><![CDATA[payload.empEmail]]></ee:set-variable>
+				<ee:set-variable variableName="flowName" ><![CDATA["update-employee-profile"]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
 		<salesforce:query doc:name="Retrieve Id Of Traget Record" doc:id="de160ae8-02ca-4458-9c8e-ac7bff63d25f" config-ref="Salesforce_Config">
@@ -67,5 +68,6 @@ output application/json
         </ee:transform>
 		<flow-ref doc:name="Flow Reference" doc:id="bd91cbea-0b3e-432b-92c8-2fbace2f6f4d" name="send-email"/>
 		<logger level="INFO" doc:name="End Log" doc:id="86506361-3149-426e-ae45-764effc65faf" message="Complete update record flow"/>
+		<error-handler ref="emp-global-error-Handler"/>
     </flow>
 	</mule>
