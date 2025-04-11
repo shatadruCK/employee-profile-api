@@ -77,18 +77,13 @@ output application/json
 		</choice>
 		<error-handler>
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f24289fd-573e-4574-abf8-2438ab01f607" type="CUSTOM:SALESFORCE_UPDATE_FAILED">
-				<ee:transform doc:name="Set Error Reponse" doc:id="291ef50f-58d3-434d-aa5b-655720777717" >
+				<ee:transform doc:name="Set Error Payload" doc:id="291ef50f-58d3-434d-aa5b-655720777717" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
+import modules::errorUtils
 output application/json
 ---
-{
-  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
-  transactionId: vars.transactionId,
-  flowName: vars.flowName,
-  errorComponentPath: error.failingComponent as String,
-  errorMessage: error.description,
-}
+errorUtils::buildErrorResponse(vars.transactionId, vars.flowName, error)
 ]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >

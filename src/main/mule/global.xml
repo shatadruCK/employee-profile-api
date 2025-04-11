@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <mule
-	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+xmlns:email="http://www.mulesoft.org/schema/mule/email"
+		xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
 	xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto"
 	xmlns:s3="http://www.mulesoft.org/schema/mule/s3"
 	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
 	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
 	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
@@ -35,6 +37,13 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
 			<crypto:pgp-asymmetric-key-info keyId="${secure::pgp.keyId}" fingerprint="${secure::pgp.fingerPrint}" />
 		</crypto:pgp-key-infos>
 	</crypto:pgp-config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="95b3717e-f34d-46d4-b050-59bed9b17a56" >
+		<email:smtp-connection host="smtp.gmail.com" port="587" user="shatadru.mandal@cloudkaptan.com" password="tdas gbiw awmj jiuw" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="d3eb6e15-eaa2-4126-9401-59e8a126036e" file="${env}.yaml" key="${encKey}" />
 	
 </mule>
