@@ -13,10 +13,16 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Bad request"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">400</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -26,10 +32,16 @@ output application/json
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Resource not found"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">404</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -40,10 +52,16 @@ output application/json
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Method not allowed"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">405</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -53,10 +71,16 @@ output application/json
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Not acceptable"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">406</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -67,10 +91,16 @@ output application/json
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Unsupported media type"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">415</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -95,9 +125,10 @@ output application/json
 ---
 {
   timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
   flowName: vars.flowName,
   errorComponentPath: error.failingComponent as String,
-  errorMessage: error.description,
+  errorMessage: error.description
 }
 
 
@@ -114,7 +145,13 @@ output application/json
 					<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Something went wrong"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables >
 					<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
