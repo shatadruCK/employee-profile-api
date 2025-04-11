@@ -19,6 +19,7 @@
 			<ee:message />
 			<ee:variables>
 				<ee:set-variable variableName="transactionId"><![CDATA[attributes.headers.'x-transaction-id' default uuid()]]></ee:set-variable>
+				<ee:set-variable variableName="flowName" ><![CDATA["salesforce-emp-profile-api"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
         <apikit:router config-ref="salesforce-emp-profile-api-config" />

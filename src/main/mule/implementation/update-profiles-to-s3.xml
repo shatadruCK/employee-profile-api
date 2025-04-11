@@ -53,7 +53,21 @@ output application/xlsx
 		<logger level="INFO" doc:name="End log" doc:id="b7b1735d-d0df-4329-b166-9d9004185cd7" message="Completed the scheduled process"/>
 		<error-handler >
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="82887137-e3cc-48ca-b895-7850c3dfe993" type="ANY">
-				<logger level="INFO" doc:name="Error Log" doc:id="21f8700e-82ec-4fd1-bf14-bfd282f1f3e8" message="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  timestamp: now() as String {format: &quot;yyyy-MM-dd'T'HH:mm:ss.SSSZ&quot;},&#10;  transactionId: vars.transactionId,&#10;  flowName: vars.flowName,&#10;  errorComponentPath: error.failingComponent as String,&#10;  errorMessage: error.description&#10;}]"/>
+				<ee:transform doc:name="Set Error Payload" doc:id="8c5da3db-0c12-4e9f-b438-36de011c80b4" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="emailId" ><![CDATA["Shatadru.mandal@cloudkaptan.com"]]></ee:set-variable>
+						<ee:set-variable variableName="emailSubject" ><![CDATA["update-profile-to-s3 flow failure"]]></ee:set-variable>
+						<ee:set-variable variableName="emailBody" ><![CDATA[%dw 2.0
+import modules::errorUtils
+output application/json
+---
+errorUtils::buildErrorResponse(vars.transactionId, vars.flowName, error)]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<logger level="INFO" doc:name="Error Log" doc:id="21f8700e-82ec-4fd1-bf14-bfd282f1f3e8" message="#[vars.emailBody]" />
+				<flow-ref doc:name="Flow Reference To Send Mail" doc:id="0da51c2b-bb2a-49e7-a1b3-97ace2bb4aa7" name="send-email"/>
 			</on-error-propagate>
 		</error-handler>
 	</flow>
