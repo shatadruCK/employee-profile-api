@@ -13,10 +13,16 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Bad request"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">400</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -26,10 +32,16 @@ output application/json
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Resource not found"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">404</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -40,10 +52,16 @@ output application/json
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Method not allowed"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">405</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -53,10 +71,16 @@ output application/json
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Not acceptable"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">406</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -67,10 +91,16 @@ output application/json
 					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Unsupported media type"}]]></ee:set-payload>
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="httpStatus">415</ee:set-variable>
+					<ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
@@ -87,5 +117,47 @@ output application/json
 				</ee:variables>
 			</ee:transform>
 		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2ae57b9a-21ae-4838-9eee-a4e2db81177f" type="SALESFORCE:COMMUNICATION, SALESFORCE:CONNECTIVITY, SALESFORCE:INSUFFICIENT_PERMISSIONS, SALESFORCE:INVALID_INPUT, SALESFORCE:INVALID_RESPONSE, SALESFORCE:LIMIT_EXCEEDED, SALESFORCE:MUTUAL_AUTHENTICATION_FAILED, SALESFORCE:NOT_FOUND, SALESFORCE:OPERATION_NOT_SUPPORTED, SALESFORCE:RETRY_EXHAUSTED, SALESFORCE:TIMEOUT, SALESFORCE:UNAVAILABLE" >
+				<ee:transform doc:name="Transform Message" doc:id="fcbbffd3-6f63-4cf7-a127-b2bdd60dc8ce" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}
+
+
+]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f5b8c491-8513-4e28-b908-8947854d7f7a" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="a6e922e9-9f00-4245-94d3-a87c7839ecd0" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		
 	</error-handler>
 </mule>
