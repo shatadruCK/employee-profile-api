@@ -47,7 +47,9 @@ output application/json
 		</ee:transform>
 		<salesforce:update type="Employee_Profile__c" doc:name="Update Record" doc:id="f26f4559-4d8a-479d-a9ca-cbffd1c1be8a" config-ref="Salesforce_Config">
 		</salesforce:update>
-		<ee:transform doc:name="Set Response">
+		<choice doc:name="Choice" doc:id="c525c8e8-7871-4a17-9863-85a8e238cf23" >
+			<when expression="#[payload.successful == true]">
+				<ee:transform doc:name="Set Response">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -57,17 +59,43 @@ output application/json
   message: "updated"
 } as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
             </ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="emailBody" ><![CDATA[output text/plain
+			<ee:variables>
+				<ee:set-variable variableName="emailBody"><![CDATA[output text/plain
 ---
 "Hi " ++ (vars.updatePayload.empName default "Employee") ++ ",\n\n" ++
 "Your employee profile has been updated successfully in Salesforce.\n\nThanks"
 ]]></ee:set-variable>
-				<ee:set-variable variableName="emailSubject" ><![CDATA["Profile Update"]]></ee:set-variable>
+				<ee:set-variable variableName="emailSubject"><![CDATA["Profile Update"]]></ee:set-variable>
 			</ee:variables>
         </ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="bd91cbea-0b3e-432b-92c8-2fbace2f6f4d" name="send-email"/>
-		<logger level="INFO" doc:name="End Log" doc:id="86506361-3149-426e-ae45-764effc65faf" message="Complete update record flow"/>
-		<error-handler ref="emp-global-error-Handler"/>
+				<flow-ref doc:name="Flow Reference" doc:id="bd91cbea-0b3e-432b-92c8-2fbace2f6f4d" name="send-email" />
+				<logger level="INFO" doc:name="End Log" doc:id="86506361-3149-426e-ae45-764effc65faf" message="Complete update record flow" />
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="370d062c-9eb0-42c9-856f-c8a1b35ec5d5" type="CUSTOM:SALESFORCE_UPDATE_FAILED" description="There is no record with this employee id "/>
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f24289fd-573e-4574-abf8-2438ab01f607" type="CUSTOM:SALESFORCE_UPDATE_FAILED">
+				<ee:transform doc:name="Set Error Reponse" doc:id="291ef50f-58d3-434d-aa5b-655720777717" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"},
+  transactionId: vars.transactionId,
+  flowName: vars.flowName,
+  errorComponentPath: error.failingComponent as String,
+  errorMessage: error.description,
+}
+]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
     </flow>
 	</mule>
